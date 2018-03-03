@@ -12,8 +12,10 @@
     "atob": "^2.0.3",
     "azure-storage": "^2.8.0",
     "body-parser": "^1.18.2",
+    "buffer": "^5.1.0",
     "data-uri-to-buffer": "^2.0.0",
     "express": "^4.16.2",
+    "image-data-uri": "^1.0.1",
     "mssql": "^4.1.0",
     "parse-data-uri": "^0.2.0"
   },
