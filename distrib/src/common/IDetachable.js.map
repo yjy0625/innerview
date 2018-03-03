@@ -1,0 +1,1 @@
+{"version":3,"sources":["../src/common/IDetachable.ts"],"names":[],"mappings":"","file":"IDetachable.js","sourcesContent":["\nexport interface IDetachable {\n    Detach(): void;\n}\n"]}
