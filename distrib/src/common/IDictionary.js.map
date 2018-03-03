@@ -1,0 +1,1 @@
+{"version":3,"sources":["../src/common/IDictionary.ts"],"names":[],"mappings":"","file":"IDictionary.js","sourcesContent":["\nexport interface IStringDictionary<TValue> {\n    [propName: string]: TValue;\n}\n\nexport interface INumberDictionary<TValue> extends Object {\n    [propName: number]: TValue;\n}\n"]}

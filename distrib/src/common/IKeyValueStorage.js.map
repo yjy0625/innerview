@@ -1,0 +1,1 @@
+{"version":3,"sources":["../src/common/IKeyValueStorage.ts"],"names":[],"mappings":"","file":"IKeyValueStorage.js","sourcesContent":["\nexport interface IKeyValueStorage {\n    Get(key: string): string;\n    GetOrAdd(key: string, valueToAdd: string): string;\n    Set(key: string, value: string): void;\n    Remove(key: string): void;\n}\n"]}
