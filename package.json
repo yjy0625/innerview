@@ -1,7 +1,7 @@
 {
   "name": "innerview-backend",
   "version": "1.0.0",
-  "description": "",
+  "description": "An interview prep app for ambitious daydreamers.",
   "main": "index.js",
   "scripts": {
     "start": "node index.js"
@@ -9,7 +9,18 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "azure-storage": "^2.8.0",
     "body-parser": "^1.18.2",
-    "express": "^4.16.2"
-  }
+    "express": "^4.16.2",
+    "mssql": "^4.1.0"
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yjy0625/innerview.git"
+  },
+  "bugs": {
+    "url": "https://github.com/yjy0625/innerview/issues"
+  },
+  "homepage": "https://github.com/yjy0625/innerview#readme"
 }
