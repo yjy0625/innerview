@@ -26,17 +26,17 @@ gulp.task("build_ES5", function() {
             declaration: true,
             noImplicitAny: true,
             removeComments: false,
-            outDir: 'distrib'
+            outDir: 'public/distrib'
         }))
         .pipe(sourcemaps.write('.'))
-        .pipe(gulp.dest('distrib'));
+        .pipe(gulp.dest('public/distrib'));
 });
 
 
 gulp.task("build", ["build_ES5"]);
 
 gulp.task("bundle", ["build_ES5"], function () {
-    return gulp.src('public/practice/test.js')
+    return gulp.src('public/practice/scripts/include_sdk.js')
     .pipe(webpack({
         output: {filename: 'speech.sdk.bundle.js'},
         devtool: 'source-map',
@@ -48,7 +48,7 @@ gulp.task("bundle", ["build_ES5"], function () {
             }]
         }
     }))
-    .pipe(gulp.dest('distrib'));
+    .pipe(gulp.dest('public/distrib'));
 });
 
 

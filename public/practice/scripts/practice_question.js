@@ -1,17 +1,13 @@
 ;(function ( $, window, document, undefined ) {
 
-	var defaults = {
-        defaultProperty: "defaultPropertyValue"
-    };
+	var module;
 
-    function PracticeQuestion( element, options ) {
-    	this.element = element;
-
-        this.options = $.extend( {}, defaults, options);
-
-        this._defaults = defaults;
+    function PracticeQuestion( options ) {
+        this.options = options;
 
         this.init();
+
+        module = this;
 
         return this;
     }
@@ -19,24 +15,47 @@
     PracticeQuestion.prototype = {
 
         init: function() {
-        	this.isRecording = false;
-        	this.startTime = null;
-        	this.prepTime = 0;
+        	this.startTime = 0;
         	this.totalTime = 0;
-        	this.images = [];
-        	this.responseString = '';
+        	this.audioContent = '';
+            this.recognizer = RecognizerSetup(SDK,"Dictation","en-US","Simple","5bb3040a9c564c68a868be4038872ed3");
         },
 
         startRecording: function() {
-           	this.isRecording = true;
-           	this.startTime = Date.now();
-
+            RecognizerStart(SDK, this.recognizer, this.handleRecordingEvent);
         },
 
         stopRecording: function() {
-        	this.isRecording = false;
-        	this.totalTime = (Date.now() - this.startTime) / 1000;
+            RecognizerStop(SDK, this.recognizer);
+        },
 
+        handleRecordingEvent: function(event) {
+            const eventType = event['RecognitionStatus'];
+            if(eventType === "Success") {
+                console.log("Audio: New audio content '" + event.DisplayText + "'.");
+                if(module.audioContent === '') {
+                    module.startTime = event.Offset / 10000000;
+                    console.log("Audio: Start at " + module.startTime + " seconds.");
+                }
+                module.audioContent += event.DisplayText;
+            }
+            else { // end dictation
+                module.totalTime = event.Offset / 10000000;
+                console.log("Audio: Finish at " + module.totalTime + " seconds.");
+            }
+        },
+
+        getData: function() {
+            return {
+                "timing": {
+                    "startTime": module.startTime,
+                    "totalTime": module.totalTime
+                },
+                "audioContent": module.audioContent,
+                "index": module.options.questionIndex,
+                "isFollowup": module.options.isFollowup,
+                "questionString": module.options.questionString
+            };
         }
 
     };

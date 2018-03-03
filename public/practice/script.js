@@ -2,7 +2,11 @@
 
 var questions;
 var questionIndex = -1;
-var practiceQuestions = [];
+var questionIsFollowup = false;
+var practiceQuestion = null;
+var responseData = [];
+var snapshots = [];
+var snapshotInterval;
 
 // Main
 
@@ -10,13 +14,16 @@ $(function() {
 	questions = getQuestions();
 	setTotalQuestionNumberDisplay(questions.length);
 	initUI();
+	initWebcam();
+	snapshotInterval = window.setInterval(function () {takeSnapshot();}, 5000);
 
 	// add event listener for buttons
 	$(".quit.button").click(function() {
-		
+		// TODO: go back
 	});
 	$(".next.button").click(function() {
-		practiceQuestions[practiceQuestions.length - 1].stopRecording();
+		practiceQuestion.stopRecording();
+		responseData.push(practiceQuestion.getData());
 		askQuestion();
 	});
 
@@ -45,12 +52,13 @@ function askQuestion() {
 		}
 
 		// UI operations
-		var practiceQuestion = new PracticeQuestion({
-			'questionString': questions[questionIndex]
+		practiceQuestion = new PracticeQuestion({
+			'questionIndex': questionIndex,
+			'questionString': questions[questionIndex],
+			'isFollowup': questionIsFollowup
 		});
 		setTimeout(function() {
 			setQuestionIndexDisplay(questionIndex);
-			practiceQuestions.push(practiceQuestion);
 			showQuestion(questions[questionIndex]);
 			practiceQuestion.startRecording();
 		}, 500);
@@ -62,8 +70,37 @@ function currentQuestionIsLastQuestion() {
 	return questionIndex == questions.length;
 }
 
-function submitData() {
+/*
+* Webcam functionalities
+*/
 
+function initWebcam() {
+	Webcam.set({
+		width: 320,
+		height: 240,
+		image_format: 'jpeg',
+		jpeg_quality: 90
+	});
+	Webcam.attach('#webcam');
+}
+
+function takeSnapshot() {
+	Webcam.snap( function(data_uri) {
+		snapshots.push(data_uri);
+	} );
+}
+
+/*
+* Sending result to backend
+*/
+
+function submitData() {
+	clearInterval(snapshotInterval);
+	var data = {
+		"questions": responseData,
+		"snapshots": snapshots
+	};
+	console.log(data);
 }
 
 /*

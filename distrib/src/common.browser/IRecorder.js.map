@@ -1,1 +1,0 @@
-{"version":3,"sources":["../src/common.browser/IRecorder.ts"],"names":[],"mappings":"","file":"IRecorder.js","sourcesContent":["import { Stream } from \"../common/Exports\";\n\nexport interface IRecorder {\n    Record(context: AudioContext, mediaStream: MediaStream, outputStream: Stream<ArrayBuffer>): void;\n    ReleaseMediaResources(context: AudioContext): void;\n}\n"]}
