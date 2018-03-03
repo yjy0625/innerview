@@ -9,12 +9,16 @@ let accessKey = '1f106a6e1d0245279847533f272c1ebc';
 let accessKey_face = 'd0b93efcc5b14ba5b0c7dc97ed4f7133';
 let uri = 'westus.api.cognitive.microsoft.com';
 let path2 = '/face/v1.0/detect';
+let dataUriToBuffer = require('data-uri-to-buffer');
+var storage = require('azure-storage');
 
+var parseDataUri = require('parse-data-uri')
 process.env['AZURE_STORAGE_ACCOUNT'] = 'hacktechdb'
 process.env['AZURE_STORAGE_ACCESS_KEY'] = '8pKd3ObdvvKqNDc9a4c9MZmVQDm4XGQTboarTbNcmc6K7VSNlBn4TypoTogvAfNHyMZo+f/cUaV0Pj3PDnIPRA=='
 process.env['AZURE_STORAGE_CONNECTION_STRING'] = 'DefaultEndpointsProtocol=https;AccountName=hacktechdb;AccountKey=8pKd3ObdvvKqNDc9a4c9MZmVQDm4XGQTboarTbNcmc6K7VSNlBn4TypoTogvAfNHyMZo+f/cUaV0Pj3PDnIPRA==;EndpointSuffix=core.windows.net'
 var blobSvc = azure.createBlobService();
-
+var connectionString = 'DefaultEndpointsProtocol=https;AccountName=hacktechdb;AccountKey=8pKd3ObdvvKqNDc9a4c9MZmVQDm4XGQTboarTbNcmc6K7VSNlBn4TypoTogvAfNHyMZo+f/cUaV0Pj3PDnIPRA==;EndpointSuffix=core.windows.net';
+var blobService = storage.createBlobService(connectionString);
 
 var sentiment = 0.0;
 var wording = '';
@@ -26,37 +30,10 @@ var expression_neutral = 0.0;
 var expression_happiness = 0.0;
 var expression_sadness = 0.0;
 var expression_surprise = 0.0;
-var sentimantFlg = 0;
-var faceFlag = 1;
+var sentimantFlag = 0;
+var faceFlag = 0;
 
 
-let response_handler_face= function (response) {
-    let body = '';
-    response.on ('data', function (d) {
-        body += d;
-    });
-    response.on ('end', function () {
-        let body_ = JSON.parse (body);
-        let body__ = JSON.stringify (body_, null, '  ');
-        console.log (body__);
-        emotion_json = body__;
-        console.log("emotion_json: " + emotion_json);
-		expression_anger= emotion_json[0]['emotion']['anger'];
-		expression_contempt= emotion_json[0]['emotion']['contempt'];
-		expression_disgust= emotion_json[0]['emotion']['disgust'];
-		expression_fear= emotion_json[0]['emotion']['fear'];
-		expression_happiness= emotion_json[0]['emotion']['happiness'];
-		expression_neutral= emotion_json[0]['emotion']['neutral'];
-		expression_sadness= emotion_json[0]['emotion']['sadness'];
-		expression_surprise= emotion_json[0]['emotion']['surprise'];
-
-		faceFlag = 1;
-
-    });
-    response.on ('error', function (e) {
-        console.log ('Error: ' + e.message);
-    });
-};
 
 let get_sentiments = function (documents, res) {
     let body = JSON.stringify (documents);
@@ -113,8 +90,7 @@ let get_sentiments = function (documents, res) {
 //     req.end ();
 // }
 
-let get_face = function(documents){
-	let body = JSON.stringify (documents);
+let get_face = function(url_, res){
 
     let request_params = {
         method : 'POST',
@@ -124,10 +100,40 @@ let get_face = function(documents){
             "Content-Type": "application/json"
         },
         data:{
-        	url: ""}
+        	url: url_}
     };
 
-    let req = https.request (request_params, response_handler_face);
+    let req = https.request (request_params, function(response){
+    	 let body = '';
+    response.on ('data', function (d) {
+        body += d;
+    });
+    response.on ('end', function () {
+        let body_ = JSON.parse (body);
+        let body__ = JSON.stringify (body_, null, '  ');
+        console.log (body__);
+        emotion_json = body__;
+        console.log("emotion_json: " + emotion_json);
+		expression_anger= emotion_json[0]['emotion']['anger'];
+		expression_contempt= emotion_json[0]['emotion']['contempt'];
+		expression_disgust= emotion_json[0]['emotion']['disgust'];
+		expression_fear= emotion_json[0]['emotion']['fear'];
+		expression_happiness= emotion_json[0]['emotion']['happiness'];
+		expression_neutral= emotion_json[0]['emotion']['neutral'];
+		expression_sadness= emotion_json[0]['emotion']['sadness'];
+		expression_surprise= emotion_json[0]['emotion']['surprise'];
+
+		faceFlag = 1;
+		if (faceFlag == 1 & semantFlag == 1){
+			res.send("OK");
+		}
+
+    });
+    response.on ('error', function (e) {
+        console.log ('Error: ' + e.message);
+    });
+
+    });
     req.write (body);
     req.end ();
 
@@ -149,26 +155,29 @@ let get_face = function(documents){
 //     req.end ();
 // }
 
-let blobInit = function(){
-	blobSvc.createContainerIfNotExists('innerview-container', function(error, result, response){
-    if(!error){
-      // Container exists and is private
-    }
-	});
-	blobSvc.setContainerAcl('innerview-container', null /* signedIdentifiers */, {publicAccessLevel : 'container'} /* publicAccessLevel*/, function(error, result, response){
-  	if(!error){
-    // Container access level set to 'container'
-  }
-});
+let blobInit = function(datastream){
+  	var CONTAINER_NAME = "innerview-snapshots";
+  	var BLOCK_BLOB_NAME = "snapshot";
+  	var url = '';
+  	console.log("datastream: " + datastream);
+	blobService.createContainerIfNotExists(CONTAINER_NAME, { 'publicAccessLevel': 'blob' }, function (error) {
+  // handleError(error);
 
-}
+	blobService.createBlockBlobFromStream(CONTAINER_NAME, BLOCK_BLOB_NAME, datastream, function (error) {
+  //  handleError(error);
+
+  });
+});
+	  url = blobService.getUrl(CONTAINER_NAME, BLOCK_BLOB_NAME)
+	  return url;
+	}
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
   extended: true
 }));
 
 // use all files in '/public' directory for static routing
-app.use(express.static('public'))
+app.use(express.static('public'));
 
 // api requests
 app.get('/api/login/username/:username/password/:password', function (req, res) {
@@ -176,12 +185,12 @@ app.get('/api/login/username/:username/password/:password', function (req, res) 
 })
 
 app.post('/feedback', function (req, res) {
-	var numOfQuestions = req.body.questions
+	var numOfQuestions = req.body.questions.length
 	for (var i = 0; i < numOfQuestions; i++){
 		var question = req.body.questions[i]
-		var timing = question.timing;
+		var timing = question["timing"];
 		console.log("timing: " + timing);
-		var content = question.content;
+		var content = question["content"];
 		console.log("content: " + content);
 		var documents_sentiments = {'documents':[{'id': '1', 'language': "en",'text':　content}]};
 		get_sentiments(documents_sentiments, res);
@@ -202,10 +211,18 @@ app.post('/feedback', function (req, res) {
 				break;
 			}	
 		}
-
-
 	}
-	//insert into the database
+
+	var snapshots = req.body.snapshots;
+	var snapshotsLength = snapshots.length;
+
+	for (var i = 0; i < snapshots.length; i++){
+		var snapshotURI = snapshots[i];
+		console.log(snapshotURI);
+		decoded = parseDataUri(snapshotURI);
+		console.log(decoded.data);	
+		var url = blobInit(decoded.data);
+	}
 
 	
 	// var documents_language = {'documents':[{'id': '1', 'text': content}]};
