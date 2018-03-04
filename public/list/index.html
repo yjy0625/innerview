@@ -19,19 +19,19 @@
 </head>
 <body>
 	<div class="ui top attached menu grid">
-		<a class="item">
-            Logo
-        </a>
+		<div class="item">
+            <img class="logo image" src="../assets/images/logo-black.png"></img>
+        </div>
         <a class="item">About</a>
         <a class="active item">Practice</a>
 	</div>
 	<div class="title image block">Practice</div>
 	<div class="ui content wrapper vertical segment">
 		<div class="ui container">
-			<div class="ui one cards">
+			<div class="ui one cards to-append">
 
 				<!-- Reusable Component -->
-				<div class="interview card">
+				<div class="interview card generic hidden">
 					<div class="content">
 						<div class="ui grid">
 							<div class="twelve wide column">
@@ -43,67 +43,7 @@
 								</div>
 							</div>
 							<div class="four wide column">
-								<div class="ui large primary right floated button">
-									Start Mock Interview
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-				
-				<div class="interview card">
-					<div class="content">
-						<div class="ui grid">
-							<div class="twelve wide column">
-								<div class="card header">
-									Questions Title
-								</div>
-								<div class="card description">
-									Question description.
-								</div>
-							</div>
-							<div class="four wide column">
-								<div class="ui large primary right floated button">
-									Start Mock Interview
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-
-				<div class="interview card">
-					<div class="content">
-						<div class="ui grid">
-							<div class="twelve wide column">
-								<div class="card header">
-									Questions Title
-								</div>
-								<div class="card description">
-									Question description.
-								</div>
-							</div>
-							<div class="four wide column">
-								<div class="ui large primary right floated button">
-									Start Mock Interview
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-
-				<div class="interview card">
-					<div class="content">
-						<div class="ui grid">
-							<div class="twelve wide column">
-								<div class="card header">
-									Questions Title
-								</div>
-								<div class="card description">
-									Question description.
-								</div>
-							</div>
-							<div class="four wide column">
-								<div class="ui large primary right floated button">
+								<div class="ui large primary right floated enter button">
 									Start Mock Interview
 								</div>
 							</div>
@@ -122,4 +62,7 @@
 
 <!-- Semantic UI JS -->
 <script type="text/javascript" src="../assets/js/semantic.min.js"></script>
+
+<!-- Initialization -->
+<script type="text/javascript" src="script.js"></script>
 </html>

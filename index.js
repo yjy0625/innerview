@@ -6,6 +6,8 @@ let https = require ('https');
 const sql = require('mssql')
 var azure = require('azure-storage');
 const ImageDataURI = require('image-data-uri');
+var Connection = require('tedious').Connection;
+var Request = require('tedious').Request;
 
 let accessKey_sentiment = 'a700966b433a4adc8113427a6d4d4ae5';
 let accessKey_face = '601e6f96dd0d4db4a456c0920a700cde';
@@ -34,6 +36,26 @@ app.use(bodyParser.urlencoded({
 	extended: true
 }));
 
+var config = {
+	userName: 'ServerAdmin',
+	password: 'Hacktech!',
+	server: 'hacktechsql.database.windows.net',
+	options: {
+		database: 'HacktechDB',
+		encrypt: true
+	}
+}
+var connection = new Connection(config);
+connection.on('connect', function(err) {
+	if(err) {
+		console.log("Error connecting to the database");
+	}
+	else {
+		console.log("Connected to the database");
+	}
+});
+
+// for debugging purposes
 var tempJson;
 
 // use all files in '/public' directory for static routing
@@ -62,21 +84,27 @@ let get_key_phrases = function (documents) {
 * API Requests
 */
 app.get('/api/login/username/:username/password/:password', function (req, res) {
-	req.session.username = req.params.username;
-	res.send("OK");
+	signin(req.params.username, req.params.password, function(pass) {
+		if(pass) {
+			res.send('OK');
+		}
+		else {
+			res.send('Not OK');
+		}
+	});
 })
 
-app.get('/interviews/all', function (req, res) {
+app.get('/api/interviews/all', function (req, res) {
 	var interviews = [
 		{
 			"id": 1, 
-			"name": "Google Software Intern", 
-			"description": "This set of practice problems is targeted to help you gain an software internship from Google. Good Luck."
+			"name": "Microsoft Software Intern", 
+			"description": "This set of practice problems is targeted to help you gain an software internship from Microsoft. Good Luck."
 		},
 		{
 			"id": 2, 
-			"name": "Microsoft Software Intern", 
-			"description": "This set of practice problems is targeted to help you gain an software internship from Microsoft. Good Luck."
+			"name": "Google Software Intern", 
+			"description": "This set of practice problems is targeted to help you gain an software internship from Google. Good Luck."
 		},
 		{
 			"id": 3, 
@@ -89,7 +117,7 @@ app.get('/interviews/all', function (req, res) {
 	res.send(JSON.stringify(interviews));
 })
 
-app.get('/interviews/questions/:id', function (req, res) {
+app.get('/api/interviews/questions/:id', function (req, res) {
 	var questions = [
 		"Tell me about your self",
 		"What is one technical exprience that you are very proud of",
@@ -98,18 +126,14 @@ app.get('/interviews/questions/:id', function (req, res) {
 	res.send(JSON.stringify(questions));
 })
 
-app.get('/api/login/username/:username/password/:password', function (req, res) {
-	res.send("OK");
-})
-
-app.get('/feedback/username/:username/interview_id/:interview_id', function (req, res) {
+app.get('/api/feedback/username/:username/interview_id/:interview_id', function (req, res) {
 	var username = tempJson["username"];
 	var interview = tempJson["interviews"][interview_id];
 	var interviewReturnJson = {"username": username, "interview": interview}
-	res.send("JSON.stringify(interviewReturnJson)");
+	res.send(JSON.stringify(interviewReturnJson));
 })
 
-app.post('/feedback', function (req, res) {
+app.post('/api/feedback', function (req, res) {
 	console.log(Object.keys(req.body));
 	var questions = req.body["questions"];
 	var numOfQuestions = questions.length;
@@ -180,12 +204,26 @@ app.post('/feedback', function (req, res) {
 		completedRequests++;
 		console.log("" + completedRequests + " / " + (numOfSnapshots + numOfQuestions) + " requests completed.");
 		if(completedRequests == numOfSnapshots + numOfQuestions) {
-			console.log(finalResult);
 			tempJson = finalResult;
+			// TODO: insert this into database
 			res.send("OK");
 		}
 	}
 })
+
+/*
+* Database Abstraction Layer
+*/
+
+function signin(username, password, callback) {
+	var requestSql = "select * from userData where id='" + username + "' and password='" + password + "';";
+
+	var request = new Request(requestSql, (err, rowCount, rows) => {
+		callback(rowCount > 0);
+	});
+
+	connection.execSql(request);
+}
 
 /*
 * Helpers
@@ -282,7 +320,6 @@ let get_face = function(image_uri, callback) {
 
 	req.write(ImageDataURI.decode(image_uri).dataBuffer);
 	req.end();
-
 }
 
 /*

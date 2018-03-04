@@ -20,7 +20,7 @@ $(function() {
 
 	// add event listener for buttons
 	$(".quit.button").click(function() {
-		// TODO: go back
+		window.location.href = "/list";
 	});
 	$(".next.button").click(function() {
 		practiceQuestion.stopRecording();
@@ -39,7 +39,7 @@ $(function() {
 function getQuestions(callback) {
 	$.ajax({
 		method: "GET",
-		url: "/interviews/questions/" + interviewId
+		url: "/api/interviews/questions/" + interviewId
 	}).done(res => callback(res));
 }
 
@@ -113,7 +113,7 @@ function submitData() {
 	console.log(data);
 	$.ajax({
 		method: "POST",
-		url: "/feedback/",
+		url: "/api/feedback/",
 		data: data
 	}).done(res => {
 		if(res === 'OK') {

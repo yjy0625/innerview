@@ -20,13 +20,23 @@ body {
 	font-size: 20px;
 }
 
+.ui.menu .item:before {
+	background: none;
+}
+
+.ui.menu .active.item {
+	color: #6a11cb;
+	font-weight: bold;
+	background: none !important;
+}
+
 .content.wrapper {
 	width: 100%;
 
 	background: white;
 }
 
-.interview.card:first-child {
+.interview.card:nth-child(2) {
 	margin-top: 20px !important;
 }
 
@@ -48,4 +58,8 @@ body {
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
+}
+
+.logo.image {
+	min-width: 120px;
 }
