@@ -1,1 +1,190 @@
-Feedback
+<!doctype html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8" />
+	<!-- <link rel="icon" type="image/png" href=""> -->
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+
+	<title>Feedback</title>
+
+	<meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
+	<meta name="viewport" content="width=device-width" />
+
+	<!-- Icons -->
+	<link rel="stylesheet" href="../../assets/css/pe-icon-7-stroke.css"/>
+
+	<!-- Semantic UI CSS -->
+	<link rel="stylesheet" href="../../assets/css/semantic.min.css"/>
+
+	<!-- Custom Stylesheet -->
+	<link rel="stylesheet" href="../../global.css"/>
+	<link rel="stylesheet" href="feedback.css"/>
+</head>
+
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="ui inverted back button">Back</div>
+      <div class="logo">
+      </div>
+    </div>
+    <div class="content block">
+      <div class="headline">
+        <div class="icon"><span class="pe-7s-speaker"></span></div>
+        <div class="des">
+          SPEAKING
+        </div>
+      </div>
+      <div class="analysis">
+        <div id="g3" class="gauge"></div>
+        <div class="details">
+          <div class="detail_header">
+          </div>
+          <div class="detail_content">
+
+            <div class="stats">
+              <div class="ui statistic">
+                <div class="value"></div>
+                <div class="label">number of repetitive words</div>
+              </div>
+
+              <div class="ui statistic">
+                <div class="value">0.5</div>
+                <div class="label">Average Sentimentality level</div>
+              </div>
+
+            </div>
+
+            <div class="conclude">
+              <li></li>
+              <li></li>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="behavioral block">
+      <div class="headline">
+        <div class="icon"><span class="pe-7s-smile"></span></div>
+        <div class="des">
+          BEHAVIOR
+        </div>
+      </div>
+      <div class="analysis">
+        <div id="g4" class="gauge"></div>
+        <div class="details">
+          <div class="detail_header">
+          </div>
+          <div class="detail_content">
+            <div class="stats">
+              <div class="ui statistic">
+                <div class="value"></div>
+                <div class="label">level of contempt</div>
+              </div>
+
+              <div class="ui statistic">
+                <div class="value"></div>
+                <div class="label">level of calmness</div>
+              </div>
+
+              <div class="ui statistic">
+                <div class="value"></div>
+                <div class="label">level of surprise</div>
+              </div>
+
+            </div>
+
+            <div class="conclude">
+              <li></li>
+              <li></li>
+              <li></li>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="timing block">
+      <div class="headline">
+        <div class="icon"><span class="pe-7s-timer"></span></div>
+        <div class="des">
+          TIMING
+        </div>
+      </div>
+      <div class="analysis">
+        <div id="g2" class="gauge"></div>
+        <div class="details">
+          <div class="detail_header">
+          </div>
+          <div class="detail_content">
+
+            <div class="stats">
+
+              <div class="ui statistic">
+                <div class="value"></div>
+                <div class="label">Average Time for Preparing a Question</div>
+              </div>
+
+              <div class="ui statistic">
+                <div class="value"></div>
+                <div class="label">Average Time for Answering a Question</div>
+              </div>
+
+            </div>
+
+            <div class="conclude">
+              <li></li>
+              <li></li>
+              <li></li>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="general block">
+      <div class="headline">
+        <div class="icon"><span class="pe-7s-check"></span></div>
+        <div class="des">
+          OVERALL
+        </div>
+      </div>
+      <div class="analysis">
+        <div id="g1" class="gauge"></div>
+        <div class="details">
+          <div class="detail_header">
+          </div>
+          <div class="detail_content">
+
+            <div class="stats">
+
+              <div class="ui statistic">
+                <div class="value">Good</div>
+                <div class="label"></div>
+              </div>
+
+              <div class="ui statistic">
+                <div class="value">Lack</div>
+                <div class="label">Average Time for Answering a Question</div>
+              </div>
+
+            </div>
+
+            <div class="conclude">
+              Overall Suggestion:
+              <li></li>
+              <li></li>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+<script type="text/javascript" src="../../assets/js/jquery-1.10.2.js"></script>
+<script src="script.js" charset="utf-8"></script>
+<!-- gauge api -->
+<script src="justgage/raphael-2.1.4.min.js"></script>
+<script src="justgage/justgage.js"></script>
