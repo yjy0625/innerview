@@ -134,12 +134,13 @@ app.get('/api/feedback/interview_id/:interviewId', function (req, res) {
 })
 
 app.post('/api/feedback', function (req, res) {
-	console.log(Object.keys(req.body));
 	var questions = req.body["questions"];
 	var numOfQuestions = questions.length;
 	var snapshots = req.body["snapshots"];
 	var numOfSnapshots = snapshots.length;
 	var completedRequests = 0;
+
+	console.log(questions);
 
 	var finalResult = {
 		"metadata": req.body["metadata"],
@@ -211,15 +212,11 @@ app.post('/api/feedback', function (req, res) {
 		console.log("[" + debugIdentifier + "]" + completedRequests + " / " + (numOfSnapshots + numOfQuestions) + " requests completed.");
 		if(completedRequests == numOfSnapshots + numOfQuestions) {
 			tempJson = finalResult;
+			console.log(JSON.stringify(finalResult));
 			// TODO: insert this into database
 			res.send("OK");
 		}
 	}
-
-	setTimeout(() => {
-		tempJson = finalResult;
-		res.send("OK");
-	}, 50000)
 })
 
 /*
