@@ -1,7 +1,12 @@
 $(document).ready(function(){
   var g1, g2, g3, g4;
-  var data = getData();
-  console.log(data);
+  $('.back').click(function() {
+    window.location.href = "/list"
+  })
+  getData(main);
+});
+
+function main(data) {
   var questions = data.questions;
   var score_speaking = getEvaluationForSpeaking(questions);
   var g3 = new JustGage({
@@ -72,7 +77,8 @@ $(document).ready(function(){
     shadowSize: 2,
     shadowVerticalOffset: 1
   });
-});
+}
+
 function getEvaluationForSpeaking(questions){
   var total_sentiment = 0.0;
   var ave_sentiment = 0.0;
@@ -232,92 +238,27 @@ function getGeneral(score1,score2,score3){
   }
   return (score1+score2+score3)/3;
 }
-function getData() {
-  return {
-  "questions": [
-    {
-      "prepTime": "1.02",
-      "totalTime": "0",
-      "index": "0",
-      "isFollowup": "false",
-      "questionString": "Tell me about your self",
-      "sentiment": 0.7925066947937012,
-      "wording": "",
-      "responseContent": "Please."
-    },
-    {
-      "prepTime": "0.18",
-      "totalTime": "6.73",
-      "index": "1",
-      "isFollowup": "false",
-      "questionString": "What is one technical exprience that you are very proud of",
-      "sentiment": 0.7100338339805603,
-      "wording": "",
-      "responseContent": "Wait for it wait for it.Wait for it wait for it wait for it wait for it.Wake board."
-    },
-    {
-      "prepTime": "8.83",
-      "totalTime": "14.67",
-      "index": "2",
-      "isFollowup": "false",
-      "questionString": "Tell me about your experience at HackTech",
-      "sentiment": 0.8722336292266846,
-      "wording": "",
-      "responseContent": "OK I think."
+function getData(callback) {
+  var interviewId = $.urlParam('id');
+  $.ajax({
+    method: 'GET',
+    url: '/api/feedback/interview_id/' + interviewId
+  }).done(json => {
+    console.log(json);
+    callback(JSON.parse(json));
+  });
+}
+
+/*
+* Helpers
+*/
+
+$.urlParam = function(name){
+    var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href);
+    if (results==null){
+       return null;
     }
-  ],
-  "snapshots": [
-    {
-      "expression_anger": 0.004,
-      "expression_contempt": 0.005,
-      "expression_disgust": 0.004,
-      "expression_fear": 0.002,
-      "expression_happiness": 0.007,
-      "expression_neutral": 0.832,
-      "expression_sadness": 0.014,
-      "expression_surprise": 0.132
-    },
-    {
-      "expression_anger": 0.013,
-      "expression_contempt": 0.006,
-      "expression_disgust": 0.018,
-      "expression_fear": 0.002,
-      "expression_happiness": 0.005,
-      "expression_neutral": 0.581,
-      "expression_sadness": 0.012,
-      "expression_surprise": 0.362
-    },
-    {
-      "expression_anger": 0.025,
-      "expression_contempt": 0.002,
-      "expression_disgust": 0.011,
-      "expression_fear": 0.01,
-      "expression_happiness": 0.047,
-      "expression_neutral": 0.365,
-      "expression_sadness": 0.009,
-      "expression_surprise": 0.53
-    },
-    {
-      "expression_anger": 0.012,
-      "expression_contempt": 0.024,
-      "expression_disgust": 0.031,
-      "expression_fear": 0.003,
-      "expression_happiness": 0.292,
-      "expression_neutral": 0.579,
-      "expression_sadness": 0.022,
-      "expression_surprise": 0.038
-    },
-    {
-      "expression_anger": 0.022,
-      "expression_contempt": 0.01,
-      "expression_disgust": 0.019,
-      "expression_fear": 0.008,
-      "expression_happiness": 0.462,
-      "expression_neutral": 0.33,
-      "expression_sadness": 0.02,
-      "expression_surprise": 0.128
+    else{
+       return decodeURI(results[1]) || 0;
     }
-  ],
-  "username": "jingyun"
-};
 }

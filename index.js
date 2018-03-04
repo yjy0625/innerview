@@ -126,11 +126,11 @@ app.get('/api/interviews/questions/:id', function (req, res) {
 	res.send(JSON.stringify(questions));
 })
 
-app.get('/api/feedback/username/:username/interview_id/:interview_id', function (req, res) {
-	var username = tempJson["username"];
-	var interview = tempJson["interviews"][interview_id];
-	var interviewReturnJson = {"username": username, "interview": interview}
-	res.send(JSON.stringify(interviewReturnJson));
+app.get('/api/feedback/interview_id/:interviewId', function (req, res) {
+	var username = req.session.username;
+	var interviewId = req.params.interviewId;
+	console.log(username);
+	res.send(JSON.stringify(tempJson));
 })
 
 app.post('/api/feedback', function (req, res) {
@@ -174,41 +174,52 @@ app.post('/api/feedback', function (req, res) {
 			};
 			get_sentiments(sentimentAnalysisInputData, sentiment => {
 				finalResult["questions"][i]["sentiment"] = sentiment;
-				checkComplete();
+				checkComplete("Sentiment");
 			});
 		}
 		else {
 			console.log("One transcription is empty.");
-			checkComplete();
+			checkComplete("Sentiment");
 		}
 		
 	});
 
 	snapshots.forEach((snapshot, i) => {
 		get_face(snapshot, expression => {
-			finalResult["snapshots"][i] = {
-				"expression_anger": expression.anger,
-				"expression_contempt": expression.contempt,
-				"expression_disgust": expression.disgust,
-				"expression_fear": expression.fear,
-				"expression_happiness": expression.happiness,
-				"expression_neutral": expression.neutral,
-				"expression_sadness": expression.sadness,
-				"expression_surprise": expression.surprise
-			};
-			checkComplete();
+			if(expression == null) {
+				console.log("One snapshot has no valuable information.");
+				checkComplete("Face");
+			}
+			else {
+				finalResult["snapshots"].push({
+					"expression_anger": expression.anger,
+					"expression_contempt": expression.contempt,
+					"expression_disgust": expression.disgust,
+					"expression_fear": expression.fear,
+					"expression_happiness": expression.happiness,
+					"expression_neutral": expression.neutral,
+					"expression_sadness": expression.sadness,
+					"expression_surprise": expression.surprise
+				});
+				checkComplete("Face");
+			}
 		});
 	});
 
-	function checkComplete() {
+	function checkComplete(debugIdentifier) {
 		completedRequests++;
-		console.log("" + completedRequests + " / " + (numOfSnapshots + numOfQuestions) + " requests completed.");
+		console.log("[" + debugIdentifier + "]" + completedRequests + " / " + (numOfSnapshots + numOfQuestions) + " requests completed.");
 		if(completedRequests == numOfSnapshots + numOfQuestions) {
 			tempJson = finalResult;
 			// TODO: insert this into database
 			res.send("OK");
 		}
 	}
+
+	setTimeout(() => {
+		tempJson = finalResult;
+		res.send("OK");
+	}, 50000)
 })
 
 /*
@@ -308,9 +319,13 @@ let get_face = function(image_uri, callback) {
 
 		response.on ('end', function () {
 			let emotion_json = JSON.parse(body);
-			if (emotion_json.length == 0) return;
-			emotions = emotion_json[0]['faceAttributes']['emotion'];
-			callback(emotions);
+			if (emotion_json.length == 0) {
+				callback(null);
+			}
+			else {
+				emotions = emotion_json[0]['faceAttributes']['emotion'];
+				callback(emotions);
+			}
 		});
 
 		response.on ('error', function (e) {

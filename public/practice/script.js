@@ -1,5 +1,6 @@
 // Globals
 
+var user_id;
 var interviewId;
 var questions;
 var questionIndex = -1;
@@ -12,7 +13,7 @@ var snapshotInterval;
 // Main
 
 $(function() {
-	interviewId = $.urlParam('id');
+	interviewId = $.urlParam('interviewId');
 
 	initUI();
 	initWebcam();
@@ -117,7 +118,7 @@ function submitData() {
 		data: data
 	}).done(res => {
 		if(res === 'OK') {
-			window.location.href = "/feedback";
+			window.location.href = "/feedback?id=" + interviewId;
 		}
 	});
 }
