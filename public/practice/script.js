@@ -4,7 +4,6 @@ var user_id;
 var interviewId;
 var questions;
 var questionIndex = -1;
-var questionIsFollowup = false;
 var practiceQuestion = null;
 var responseData = [];
 var snapshots = [];
@@ -26,7 +25,16 @@ $(function() {
 	$(".next.button").click(function() {
 		practiceQuestion.stopRecording();
 		responseData.push(practiceQuestion.getData());
-		askQuestion();
+		const previousResponse = practiceQuestion.getData().audioContent;
+		getFollowupQuestion(previousResponse, q => {
+			console.log("Question: " + q);
+			if(q) {
+				askFollowupQuestion(q);
+			}
+			else {
+				askQuestion();
+			}
+		})
 	});
 
 	// get the first question and start asking questions
@@ -53,13 +61,14 @@ function askQuestion() {
 	else {
 		if(questionIndex != 0) {
 			hideQuestion();
+			hideFollowup();
 		}
 
 		// UI operations
 		practiceQuestion = new PracticeQuestion({
 			'questionIndex': questionIndex,
 			'questionString': questions[questionIndex],
-			'isFollowup': questionIsFollowup
+			'isFollowup': false
 		});
 		setTimeout(function() {
 			setQuestionIndexDisplay(questionIndex);
@@ -70,8 +79,68 @@ function askQuestion() {
 	}
 }
 
+function askFollowupQuestion(questionString) {
+	practiceQuestion = new PracticeQuestion({
+		'questionIndex': questionIndex,
+		'questionString': questionString,
+		'isFollowup': true
+	});
+	setTimeout(function() {
+		setQuestionIndexDisplay(questionIndex);
+		showFollowup(questionString);
+		practiceQuestion.startRecording();
+	}, 500);
+}
+
 function currentQuestionIsLastQuestion() {
 	return questionIndex == questions.length;
+}
+
+function getFollowupQuestion(response, callback) {
+	$.ajax({
+		method: 'GET',
+		url: 'https://westus.api.cognitive.microsoft.com/luis/v2.0/apps/1a5d0a97-d862-4549-a829-753db7d68805?subscription-key=dbee4f8dbed244cc9ef3e8f9fd8665ae&verbose=true&timezoneOffset=-480&q=' + encodeURI(response)
+	}).done(res => {
+		console.log(res);
+
+		if(res.topScoringIntent === undefined) {
+			callback(null);
+			return;
+		}
+
+		const intent = res.topScoringIntent.intent;
+		const score = res.topScoringIntent.score;
+		if(score > 0.3 && intent != 'None') {
+			if(intent === 'AttendHackathon') {
+				const possibleResponses = ["Nice to see that you love hackathons. Could you describe one of the projects you like the best?"];
+			    const rand = Math.floor(Math.random() * possibleResponses.length);
+			    callback(possibleResponses[rand]);
+			}
+			else if(intent === 'Collaborate') {
+				const possibleResponses = ["Sounds good. So in terms of collaboration, have you been faced with a difficult situation in a team? How did you deal with that?"];
+			    const rand = Math.floor(Math.random() * possibleResponses.length);
+			    callback(possibleResponses[rand]);
+			}
+			else if(intent === 'Leadership') {
+				const possibleResponses = ["I see that you have a decent amount of leadership experience. Do you like to work in a team as a leader or as a member? Why?"];
+			    const rand = Math.floor(Math.random() * possibleResponses.length);
+				callback(possibleResponses[rand]);
+			}
+			else if(intent === 'MachineLearning') {
+				const possibleResponses = ["So you know about machine learning? What are some of the projects you have completed using machine learning?"];
+			    const rand = Math.floor(Math.random() * possibleResponses.length);
+			    callback(possibleResponses[rand]);
+			}
+			else { // intern
+				const possibleResponses = ["Can you tell me more about the intern project you just mentioned? What did you enjoy most about it?"];
+			    const rand = Math.floor(Math.random() * possibleResponses.length);
+			    callback(possibleResponses[rand]);
+			}
+		}
+		else {
+			callback(null);
+		}
+	});
 }
 
 /*
