@@ -282,6 +282,7 @@ let get_sentiments = function (documents, callback) {
 		});
 	});
 	req.write (body);
+	console.log("Sentiment request sent");
 	req.end();
 }
 
@@ -319,6 +320,7 @@ let get_face = function(image_uri, callback) {
 	});
 
 	req.write(ImageDataURI.decode(image_uri).dataBuffer);
+	console.log("Face request sent");
 	req.end();
 }
 
