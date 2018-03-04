@@ -98,17 +98,17 @@ app.get('/api/interviews/all', function (req, res) {
 	var interviews = [
 		{
 			"id": 1, 
-			"name": "Microsoft Software Intern", 
-			"description": "This set of practice problems is targeted to help you gain an software internship from Microsoft. Good Luck."
+			"name": "Microsoft Software Engineering Intern", 
+			"description": "Empower your future—start your career here. If you’re a student or recent graduate, we have programs, internships, and full-time opportunities available all over the world. Take a look and find the right job for you."
 		},
 		{
 			"id": 2, 
-			"name": "Google Software Intern", 
-			"description": "This set of practice problems is targeted to help you gain an software internship from Google. Good Luck."
+			"name": "Google Engineering Practicum Intern", 
+			"description": "Our unique internship offers the opportunity to work on a software project alongside other EP interns and full-time Googlers, and gives you the chance to bridge the gap between academic understanding and practical professional experience. "
 		},
 		{
 			"id": 3, 
-			"name": "Qualcomm Hardware Intern", 
+			"name": "Qualcomm Hardware Engineering Internships", 
 			"description": "This set of practice problems is targeted to help you gain an hardware internship from Qualcomm. Good Luck."
 		},
 
@@ -118,12 +118,23 @@ app.get('/api/interviews/all', function (req, res) {
 })
 
 app.get('/api/interviews/questions/:id', function (req, res) {
-	var questions = [
-		"Tell me about your self",
-		"What is one technical exprience that you are very proud of",
-		"Tell me about your experience at HackTech"
-	];
-	res.send(JSON.stringify(questions));
+	const questions = [[
+		"Tell me about your self.",
+		"What is one exprience you are most proud of.",
+		"Why do your want to work at Microsoft?"
+	], [
+		"Tell me an interesting fact about yourself.",
+		"Who do you want to be in the future?",
+		"What do you do if you disagree with your boss?"
+	], [
+		"Give an example of how you set goals and achieve them.",
+		"Did you ever not meet your goals? Why?",
+		"What are some of the activities that you enjoy?"
+	]];
+	console.log(req.params.id);
+	const response = JSON.stringify(questions[parseInt(req.params.id) - 1]);
+	console.log(response);
+	res.send(response);
 })
 
 app.get('/api/feedback/interview_id/:interviewId', function (req, res) {

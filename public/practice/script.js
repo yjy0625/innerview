@@ -12,7 +12,7 @@ var snapshotInterval;
 // Main
 
 $(function() {
-	interviewId = $.urlParam('interviewId');
+	interviewId = $.urlParam('id');
 
 	initUI();
 	initWebcam();
