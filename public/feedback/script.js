@@ -113,6 +113,15 @@ function getEvaluationForSpeaking(questions){
   return ave_sentiment*100-num_reps*10;
 }
 function getEvaluationForBehavior(snapshots){
+  if (snapshots==null||snapshots.length==0) {
+    $(".behavioral .value")[0].innerHTML = 0;
+    $(".behavioral .value")[1].innerHTML = 0;
+    $(".behavioral .value")[2].innerHTML = 0;
+    for (var i = 0; i < 3; i++) {
+      $(".behavioral .conclude li")[i].innerHTML = "No behavioral info returned";
+    }
+    return 0;
+  }
   var contempts = [];
   var total_contempts = 0.0;
   var neutrals = [];
@@ -149,7 +158,7 @@ function getEvaluationForBehavior(snapshots){
   } else {
     $(".behavioral .conclude li")[2].innerHTML = "Great job in being consistently focused and undisturbed";
   }
-  return ave_neutral*150-ave_contempt*100-ave_surprise*30;
+  return ave_neutral*100-ave_contempt*100-ave_surprise*50;
 }
 function getEvaluationForTiming(questions){
   var totalPrepTime = 0.0;
@@ -176,7 +185,7 @@ function getEvaluationForTiming(questions){
   }
   var ave_prep = Math.round(totalPrepTime/questions.length*100)/100;
   var ave_total = Math.round(totalTime/questions.length*100)/100;
-  var ave_answer = ave_total-ave_prep;
+  var ave_answer = Math.round((ave_total-ave_prep)*100)/100;
   $(".timing .value")[0].innerHTML = ave_prep;
   $(".timing .value")[1].innerHTML = ave_answer;
   if (questions[max_prep_time_index]>=10) {
@@ -217,22 +226,22 @@ function getGeneral(score1,score2,score3){
     min = score3;
   }
   if (max==score1) {
-    $(".general .label")[0].innerHTML = "Speaking Part of Interview";
+    $(".general .label")[0].innerHTML = "Speaking Skills";
   } else if (max==score2) {
-    $(".general .label")[0].innerHTML = "Behavioral Part of Interview";
+    $(".general .label")[0].innerHTML = "Behavioral Skills";
   } else {
-    $(".general .label")[0].innerHTML = "Timing Part of Interview";
+    $(".general .label")[0].innerHTML = "Timing Skills";
   }
   if (min==score1) {
-    $(".general .label")[1].innerHTML = "Speaking Part of Interview";
+    $(".general .label")[1].innerHTML = "Speaking Skills";
     $(".general .conclude li")[0].innerHTML = "Spend some time organizing your answers for some general questions";
     $(".general .conclude li")[1].innerHTML = "Pracice a bit to achiech some level of confidence before taking the InnerView";
   } else if (min==score2) {
-    $(".general .label")[1].innerHTML = "Behavioral Part of Interview";
+    $(".general .label")[1].innerHTML = "Behavioral Skills";
     $(".general .conclude li")[0].innerHTML = "Always keep eye contact with the interviewer";
     $(".general .conclude li")[1].innerHTML = "Practice smiling when interviewing";
   } else {
-    $(".general .label")[1].innerHTML = "Timing Part of Interview";
+    $(".general .label")[1].innerHTML = "Timing Skills";
     $(".general .conclude li")[0].innerHTML = "Adjust your content of answers to each question so that each takes about 1 minute";
     $(".general .conclude li")[1].innerHTML = "If your answers are bit long and you don't want to cut them, practice until you achieve confidence";
   }
