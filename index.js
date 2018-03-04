@@ -97,18 +97,18 @@ app.get('/api/login/username/:username/password/:password', function (req, res) 
 app.get('/api/interviews/all', function (req, res) {
 	var interviews = [
 		{
-			"id": 1, 
-			"name": "Microsoft Software Engineering Intern", 
+			"id": 1,
+			"name": "Microsoft Software Engineering Intern",
 			"description": "Empower your future—start your career here. If you’re a student or recent graduate, we have programs, internships, and full-time opportunities available all over the world. Take a look and find the right job for you."
 		},
 		{
-			"id": 2, 
-			"name": "Google Engineering Practicum Intern", 
+			"id": 2,
+			"name": "Google Engineering Practicum Intern",
 			"description": "Our unique internship offers the opportunity to work on a software project alongside other EP interns and full-time Googlers, and gives you the chance to bridge the gap between academic understanding and practical professional experience. "
 		},
 		{
-			"id": 3, 
-			"name": "Qualcomm Hardware Engineering Internships", 
+			"id": 3,
+			"name": "Qualcomm Hardware Engineering Internships",
 			"description": "This set of practice problems is targeted to help you gain an hardware internship from Qualcomm. Good Luck."
 		},
 
@@ -145,9 +145,9 @@ app.get('/api/feedback/interview_id/:interviewId', function (req, res) {
 })
 
 app.post('/api/feedback', function (req, res) {
-	var questions = req.body["questions"];
+	var questions = req.body["questions"] || [];
 	var numOfQuestions = questions.length;
-	var snapshots = req.body["snapshots"];
+	var snapshots = req.body["snapshots"] || [];
 	var numOfSnapshots = snapshots.length;
 	var completedRequests = 0;
 
@@ -179,7 +179,7 @@ app.post('/api/feedback', function (req, res) {
 		if(question["audioContent"] !== '') {
 			var sentimentAnalysisInputData = {
 				'documents': [{
-					'id': '1', 
+					'id': '1',
 					'language': "en",
 					'text': question["audioContent"]
 				}]
@@ -193,7 +193,7 @@ app.post('/api/feedback', function (req, res) {
 			console.log("One transcription is empty.");
 			checkComplete("Sentiment");
 		}
-		
+
 	});
 
 	snapshots.forEach((snapshot, i) => {
@@ -266,7 +266,7 @@ let get_wordings = function (content) {
 				wording += contentArray[i];
 			}
 			break;
-		}	
+		}
 	}
 	return wording;
 }

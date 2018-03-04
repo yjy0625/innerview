@@ -15,6 +15,7 @@
     PracticeQuestion.prototype = {
 
         init: function() {
+					this.timerTime = 0;
         	this.startTime = 0;
         	this.totalTime = 0;
         	this.audioContent = '';
@@ -22,10 +23,12 @@
         },
 
         startRecording: function() {
+						this.timerTime = Date.now();
             RecognizerStart(SDK, this.recognizer, this.handleRecordingEvent);
         },
 
         stopRecording: function() {
+						module.totalTime = (Date.now() - module.timerTime) / 1000;
             RecognizerStop(SDK, this.recognizer);
         },
 
@@ -40,7 +43,6 @@
                 module.audioContent += event.DisplayText;
             }
             else { // end dictation
-                module.totalTime = event.Offset / 10000000;
                 console.log("Audio: Finish at " + module.totalTime + " seconds.");
             }
         },
