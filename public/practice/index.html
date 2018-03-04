@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8" />
+	<!-- <link rel="icon" type="image/png" href=""> -->
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+
+	<title>Innerview</title>
+
+	<meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
+	<meta name="viewport" content="width=device-width" />
+
+	<!-- Icons -->
+	<link rel="stylesheet" href="../assets/css/pe-icon-7-stroke.css"/>
+
+	<!-- Semantic UI CSS -->
+	<link rel="stylesheet" href="../assets/css/semantic.min.css"/>
+
+	<!-- Custom Stylesheet -->
+	<link rel="stylesheet" href="../../global.css"/>
+	<link rel="stylesheet" href="styles.css"/>
+</head>
+
+<body>
+	<div class="wrapper full height">
+		<div class="ui top attached menu grid">
+			<div class="four wide column">
+	            <div class="ui inverted quit button">Quit</div>
+	        </div>
+	        <div class="eight wide column title text-center">
+	           Practice
+	        </div>
+		</div>
+		<div class="ui container grid">
+			<div class="ui grid">
+				<div class="four wide column question-number">
+					<span class="question-index">-</span> / <span class="question-total">-</span>
+				</div>
+				<div class="twelve wide column question-content">
+					This is a sample question string.
+				</div>
+			</div>
+			<div class="ui grid">
+				<div class="right floated twelve wide column question-followup">
+					<button class="ui inverted label button">Followup Question</button> 
+					<span class="question-followup-content">This is a followup question.</span>
+				</div>
+			</div>
+		</div>
+		<div class="finish-btn">
+			<button class="ui secondary next button">Next <i class="arrow right icon"></i></button>
+		</div>
+		<div id="webcam"></div>
+	</div>
+</body>
+
+<!-- jQuery -->
+<script type="text/javascript" src="../assets/js/jquery-1.10.2.js"></script>
+
+<!-- Semantic UI JS -->
+<script type="text/javascript" src="../assets/js/semantic.min.js"></script>
+
+<script type="text/javascript" src="scripts/practice_question.js"></script>
+
+<!-- Microsoft Speech to Text API -->
+<script type="text/javascript" src="../distrib/speech.sdk.bundle.js"></script>
+
+<script type="text/javascript" src="scripts/recognition_usage.js"></script>
+
+<!-- Webcamjs -->
+<script type="text/javascript" src="../assets/js/webcam.min.js"></script>
+
+<!-- Initialization -->
+<script type="text/javascript" src="script.js"></script>

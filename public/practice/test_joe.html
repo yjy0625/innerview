@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>practice test</title>
+  </head>
+  <body>
+    <button id="startBtn" type="button" name="startBtn">Start My Answer</button>
+    <button id="stopBtn" type="button" name="stopBtn" disabled="true">Finish This Question</button>
+    <div id="answer">
+
+    </div>
+  </body>
+  <script src="../../distrib/speech.sdk.bundle.js"></script>
+  <script src="recognition_usage.js" charset="utf-8"></script>
+  <script type="text/javascript">
+    var startBtn = document.getElementById('startBtn');
+    var stopBtn = document.getElementById('stopBtn');
+    var recognizer = RecognizerSetup(SDK,"Dictation","en-US","Simple","5bb3040a9c564c68a868be4038872ed3");
+    var audio_content = "";
+    startBtn.addEventListener("click", function(){
+      RecognizerStart(SDK, recognizer);
+      startBtn.disabled = true;
+      stopBtn.disabled = false;
+      audio_content+=
+    });
+    stopBtn.addEventListener("click", function(){
+      RecognizerStop(SDK, recognizer);
+      startBtn.disabled = false;
+      stopBtn.disabled = true;
+    });
+  </script>
+</html>
