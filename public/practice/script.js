@@ -62,7 +62,7 @@ function askQuestion() {
 			showQuestion(questions[questionIndex]);
 			practiceQuestion.startRecording();
 		}, 500);
-		
+
 	}
 }
 
