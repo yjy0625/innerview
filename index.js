@@ -29,7 +29,12 @@ var expression_sadness = 0.0;
 var expression_surprise = 0.0;
 var sentimantFlag = 0;
 var faceFlag = 0;
+var tempJson = {
+	"username": "",
+	"interviews": [],
+	"interview_name": ""
 
+};
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
   extended: true
@@ -64,8 +69,8 @@ let get_sentiments = function (documents, res) {
 
 			console.log(sentiments_json);
 			sentiment = sentiments_json['documents'][0]['score'];
-			semantFlag = 1;
-			if (semantFlag == 1 && faceFlag == 1){
+			sentimantFlag = 1;
+			if (sentimantFlag == 1 && faceFlag == 1){
 				res.send("OK");
 			}
 		});
@@ -77,7 +82,7 @@ let get_sentiments = function (documents, res) {
 	req.end();
 }
 
-let get_face = function(image_uri, res) {
+let get_face = function(image_uri, res, final) {
 
 	let request_params = {
 		method : 'POST',
@@ -97,11 +102,8 @@ let get_face = function(image_uri, res) {
 		});
 
 		response.on ('end', function () {
-			let body_ = JSON.parse (body);
-			let body__ = JSON.stringify (body_, null, '  ');
-			console.log (body__);
-			emotion_json = body__;
-			console.log("emotion_json: " + emotion_json);
+			let body_ = JSON.parse(body);
+			emotion_json = body_;
 			if (emotion_json.length == 0)
 				return;
 			expression_anger= emotion_json[0]['faceAttributes']['emotion']['anger'];
@@ -112,9 +114,9 @@ let get_face = function(image_uri, res) {
 			expression_neutral= emotion_json[0]['faceAttributes']['emotion']['neutral'];
 			expression_sadness= emotion_json[0]['faceAttributes']['emotion']['sadness'];
 			expression_surprise= emotion_json[0]['faceAttributes']['emotion']['surprise'];
-
-			faceFlag = 1;
-			if (faceFlag == 1 & semantFlag == 1){
+			if (final == 1)
+					faceFlag = 1;
+			if (faceFlag == 1 & sentimantFlag == 1){
 				res.send("OK");
 			}
 		});
@@ -152,41 +154,132 @@ app.get('/api/login/username/:username/password/:password', function (req, res) 
 	res.send("OK");
 })
 
+app.get('/interviews/all', function (req, res) {
+	var interviews = [
+						{
+							"id": 1, 
+							"name": "Google Software Intern", 
+							"description": "This set of practice problems is targeted to help you gain an software internship from Google. Good Luck."
+						},
+						{
+							"id": 2, 
+							"name": "Microsoft Software Intern", 
+							"description": "This set of practice problems is targeted to help you gain an software internship from Microsoft. Good Luck."
+						},
+						{
+							"id": 3, 
+							"name": "Qualcomm Hardware Intern", 
+							"description": "This set of practice problems is targeted to help you gain an hardware internship from Qualcomm. Good Luck."
+						},
+
+					];
+
+	res.send(JSON.stringify(interviews));
+})
+
+app.get('/interviews/questions/:id', function (req, res) {
+	var questions = [
+						"Tell me about your self",
+						"What is one technical exprience that you are very proud of",
+						"Tell me about your experience at HackTech"
+					];
+	res.send(JSON.stringify(questions));
+
+})
+
+app.get('/api/login/username/:username/password/:password', function (req, res) {
+	res.send("OK");
+})
+
+app.get('/feedback/username/:username/interview_id/:interview_id', function (req, res) {
+	var username = tempJson["username"];
+	var interview = tempJson["interviews"][interview_id];
+	var interviewReturnJson = {"username": username, "interview": interview}
+	res.send("JSON.stringify(interviewReturnJson)");
+})
+
 app.post('/feedback', function (req, res) {
-	var numOfQuestions = req.body.questions.length
-	for (var i = 0; i < numOfQuestions; i++){
-		var question = req.body.questions[i]
-		var timing = question["timing"];
-		console.log("timing: " + timing);
-		var content = question["content"];
-		console.log("content: " + content);
-		var documents_sentiments = {'documents':[{'id': '1', 'language': "en",'text':　content}]};
-		get_sentiments(documents_sentiments, res);
-		var contentArray = content.split(" ");
-		var contentLength = contentArray.length;
-		var wordingCount = 0;
-		for (var i = 0; i < contentLength; i++){
-			wordingCount = 0;
-			for (var j = 0; j < contentLength; j++){
-				if (contentArray[i] == contentArray[j]){
-					wordingCount++;
+	var username = req.body["username"];
+	tempJson["username"] = username;
+	console.log(username);
+	var interviews = req.body["interviews"];
+	console.log(req.body);
+	var numOfInterviews = interviews.length;
+	for (var x = 0; x < numOfInterviews; ++x){
+		var interview = interviews[x];
+		var metadata = interview["metadata"];
+		var interview_id = metadata["interview_id"];
+		var interview_name = metadata["interview_name"];
+		var numOfQuestions = interview["questions"].length;
+		for (var i = 0; i < numOfQuestions; i++){
+			var question = interview["questions"][i];
+			var prepTime = question["timing"]["prepTime"];
+			var totalTime = question["timing"]["totalTime"];
+			var content = question["audioContent"];
+			var index = question["index"];
+			var isFollowup = question["isFollowup"];
+			var questionString = "What is your favorite food?";
+			console.log("content: " + content);
+			var documents_sentiments = {'documents':[{'id': '1', 'language': "en",'text':　content}]};
+			get_sentiments(documents_sentiments, res);
+			var contentArray = content.split(" ");
+			var contentLength = contentArray.length;
+			var wordingCount = 0;
+			for (var i = 0; i < contentLength; i++){
+				wordingCount = 0;
+				for (var j = 0; j < contentLength; j++){
+					if (contentArray[i] == contentArray[j]){
+						wordingCount++;
+					}
+					if (wordingCount > 7){
+						if (wording != '')
+							wording += ",";
+						wording += contentArray[i];
+					}
+					break;
+				}	
+			}
+			var analysisJson = {
+				"prepTime": prepTime,
+				"totalTime": totalTime,
+				"textSentiments":sentiment,
+				"isFollowup": isFollowup,
+				"questionString": questionString,
+				"sentiment": sentiment,
+				"wording": wording
 				}
-				if (wordingCount > 7){
-					if (wording != '')
-						wording += ",";
-					wording += contentArray[i];
-				}
-				break;
-			}	
+			var dummyInterview = {
+									"metadata":{
+												"interview_id": 0,
+												"intreview_name": ""},
+									"questions":[],
+									"snapshots":[]
+								 }
+			tempJson["interviews"][x] = dummyInterview;
+			tempJson["interviews"][x]["questions"][i] = analysisJson;
 		}
-	}
 
-	var snapshots = req.body.snapshots;
-	var snapshotsLength = snapshots.length;
+		var snapshots = interview["snapshots"];
+		var snapshotsLength = snapshots.length;
+		var final = 0;
+		for (var i = 0; i < snapshots.length; i++){
+			var snapshotURI = snapshots[i];
+			// TODO get_face
+			if (i == snapshots.length - 1)
+				final = 1;
+			get_face(snapshotURI, res, final);
+			tempJson["interviews"][x]["snapshots"][i] = {
+					"expression_anger": expression_anger,
+					"expression_contempt": expression_contempt,
+					"expression_disgust": expression_disgust,
+					"expression_fear": expression_fear,
+					"expression_happiness": expression_happiness,
+					"expression_neutral": expression_neutral,
+					"expression_sadness": expression_sadness,
+					"expression_surprise": expression_surprise}
+		}
+	
 
-	for (var i = 0; i < snapshots.length; i++){
-		var snapshotURI = snapshots[i];
-		// TODO get_face
 	}
 
 	
