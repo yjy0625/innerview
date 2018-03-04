@@ -1,5 +1,6 @@
 // Globals
 
+var interviewId;
 var questions;
 var questionIndex = -1;
 var questionIsFollowup = false;
@@ -11,8 +12,8 @@ var snapshotInterval;
 // Main
 
 $(function() {
-	questions = getQuestions();
-	setTotalQuestionNumberDisplay(questions.length);
+	interviewId = $.urlParam('id');
+
 	initUI();
 	initWebcam();
 	snapshotInterval = window.setInterval(function () {takeSnapshot();}, 5000);
@@ -27,17 +28,19 @@ $(function() {
 		askQuestion();
 	});
 
-	// kickstart the first question
-	askQuestion();
+	// get the first question and start asking questions
+	getQuestions(res => {
+		questions = JSON.parse(res);
+		setTotalQuestionNumberDisplay(questions.length);
+		askQuestion();
+	});
 });
 
-function getQuestions() {
-	const questions = [
-		'Tell me about yourself.',
-		'Why google?',
-		'What skills do you have?'
-	];
-	return questions;
+function getQuestions(callback) {
+	$.ajax({
+		method: "GET",
+		url: "/interviews/questions/" + interviewId
+	}).done(res => callback(res));
 }
 
 function askQuestion() {
@@ -86,8 +89,14 @@ function initWebcam() {
 
 function takeSnapshot() {
 	Webcam.snap( function(data_uri) {
-		snapshots.push(data_uri);
-	} );
+		if(snapshots.length >= 5) {
+			const rand = Math.floor(Math.random() * 5);
+			snapshots[rand] = data_uri;
+		}
+		else {
+			snapshots.push(data_uri);
+		}
+	});
 }
 
 /*
@@ -97,10 +106,20 @@ function takeSnapshot() {
 function submitData() {
 	clearInterval(snapshotInterval);
 	var data = {
+		"username": "jingyun",
 		"questions": responseData,
 		"snapshots": snapshots
 	};
 	console.log(data);
+	$.ajax({
+		method: "POST",
+		url: "/feedback/",
+		data: data
+	}).done(res => {
+		if(res === 'OK') {
+			window.location.href = "/feedback";
+		}
+	});
 }
 
 /*
@@ -139,4 +158,18 @@ function hideQuestion() {
 
 function hideFollowup() {
 	$('.question-followup').fadeOut();
+}
+
+/*
+* Helpers
+*/
+
+$.urlParam = function(name){
+    var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href);
+    if (results==null){
+       return null;
+    }
+    else{
+       return decodeURI(results[1]) || 0;
+    }
 }
