@@ -8,6 +8,7 @@ var practiceQuestion = null;
 var responseData = [];
 var snapshots = [];
 var snapshotInterval;
+var shownFollowupQuestions = [];
 
 // Main
 
@@ -110,7 +111,7 @@ function getFollowupQuestion(response, callback) {
 
 		const intent = res.topScoringIntent.intent;
 		const score = res.topScoringIntent.score;
-		if(score > 0.3 && intent != 'None') {
+		if(score > 0.3 && intent != 'None' && !(shownFollowupQuestions.indexOf(intent) == -1)) {
 			if(intent === 'AttendHackathon') {
 				const possibleResponses = ["Nice to see that you love hackathons. Could you describe one of the projects you like the best?"];
 			    const rand = Math.floor(Math.random() * possibleResponses.length);
@@ -136,6 +137,7 @@ function getFollowupQuestion(response, callback) {
 			    const rand = Math.floor(Math.random() * possibleResponses.length);
 			    callback(possibleResponses[rand]);
 			}
+			shownFollowupQuestions.push(intent);
 		}
 		else {
 			callback(null);
