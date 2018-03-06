@@ -1,1 +1,41 @@
-Homepage
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+  <title>Log In</title>
+  <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
+	<meta name="viewport" content="width=device-width" />
+  <!-- Icons -->
+	<link rel="stylesheet" href="assets/css/pe-icon-7-stroke.css"/>
+  <!-- Semantic UI CSS -->
+	<link rel="stylesheet" href="assets/css/semantic.min.css"/>
+  <!-- Custom Stylesheet -->
+  <link rel="stylesheet" href="global.css"/>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <img src="assets/images/logo-white.png" class="logo image"></img>
+    <div class="error hidden">Incorrect username or password.</div>
+    <form class="ui form">
+      <div class="field">
+        <label>Username</label>
+        <input class="username" type="text" name="username">
+      </div>
+      <div class="field">
+        <label>Password</label>
+        <input class="password" type="password" name="password">
+      </div>
+    </form>
+    <button class="ui inverted login button">Login</button>
+  </div>
+</body>
+
+<!-- jQuery -->
+<script type="text/javascript" src="../assets/js/jquery-1.10.2.js"></script>
+
+<!-- Initialization -->
+<script type="text/javascript" src="script.js"></script>
+
+</html>

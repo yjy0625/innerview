@@ -1,0 +1,65 @@
+body {
+	background-color: white;
+}
+
+.title.image.block {
+	width: 100vw;
+	height: 40vh;
+	background-image: url("/assets/images/practice.jpg");
+	background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+
+    line-height: 40vh;
+    font-size: 48px;
+    text-align: center;
+}
+
+.ui.menu .item {
+	padding: 20px 50px;
+	font-size: 20px;
+}
+
+.ui.menu .item:before {
+	background: none;
+}
+
+.ui.menu .active.item {
+	color: #6a11cb;
+	font-weight: bold;
+	background: none !important;
+}
+
+.content.wrapper {
+	width: 100%;
+
+	background: white;
+}
+
+.interview.card:nth-child(2) {
+	margin-top: 20px !important;
+}
+
+.interview.card {
+	margin-bottom: 20px !important;
+}
+
+.interview.card > .content {
+	padding: 32px !important;
+	box-sizing: border-box;
+}
+
+.interview.card .card.header {
+	font-size: 28px;
+	line-height: 36px;
+}
+
+.interview.card .wide.column {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+}
+
+.logo.image {
+	min-width: 120px;
+}
